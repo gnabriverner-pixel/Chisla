@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  
+  --color-gold-300: #FDE68A;
+  --color-gold-400: #FBBF24;
+  --color-gold-500: #F59E0B;
+  --color-gold-600: #D97706;
+  
+  --color-dark-900: #0F1115;
+  --color-dark-800: #16191F;
+  --color-dark-700: #21252D;
+  --color-dark-600: #2D333D;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-900 text-gray-200 font-sans antialiased selection:bg-gold-500/30;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-gray-100;
+  }
+}

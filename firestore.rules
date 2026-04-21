@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function isOwner(userId) { return isAuthenticated() && request.auth.uid == userId; }
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        (request.auth.token.email == "gnabriverner@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+    }
+
+    match /guest_sessions/{sessionId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+    }
+
+    match /reports/{reportId} {
+      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || 
+                  (resource.data.userId == null) ||
+                  isAdmin();
+                  
+      allow create: if true;
+                    
+      allow update: if (isAuthenticated() && request.auth.uid == resource.data.userId) ||
+                       (isAuthenticated() && request.resource.data.userId == request.auth.uid && resource.data.userId == null) ||
+                       isAdmin();
+    }
+
+    match /premium_access/{accessId} {
+      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /admin_notes/{noteId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}

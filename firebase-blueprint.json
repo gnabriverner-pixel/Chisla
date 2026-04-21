@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "GuestSession": {
+      "title": "Guest Session",
+      "type": "object",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "lastSeenAt": { "type": "string" },
+        "attachedUserId": { "type": "string" }
+      },
+      "required": ["sessionId", "createdAt"]
+    },
+    "Report": {
+      "title": "Report",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "guestSessionId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "inputData": {
+          "type": "object",
+          "properties": {
+            "dateOfBirth": { "type": "string" },
+            "name": { "type": "string" },
+            "gender": { "type": "string" },
+            "placeOfBirth": { "type": "string" },
+            "intention": { "type": "string" }
+          }
+        },
+        "numbers": {
+          "type": "object",
+          "description": "Contains soul, path, direction, result, expression"
+        },
+        "synthesis": {
+          "type": "object",
+          "properties": {
+            "keyVector": { "type": "string" },
+            "strongSides": { "type": "array", "items": { "type": "string" } },
+            "tensionZones": { "type": "array", "items": { "type": "string" } },
+            "practicalRecommendations": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "premiumUnlocked": { "type": "boolean" },
+        "status": { "type": "string" }
+      },
+      "required": ["createdAt", "inputData", "numbers", "synthesis", "premiumUnlocked"]
+    },
+    "PremiumAccess": {
+      "title": "Premium Access",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "reportId": { "type": "string" },
+        "grantedAt": { "type": "string" },
+        "grantedBy": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "required": ["userId", "reportId", "grantedAt", "grantedBy"]
+    },
+    "AdminNote": {
+      "title": "Admin Note",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string" },
+        "userId": { "type": "string" },
+        "authorAdminId": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["authorAdminId", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": { "$ref": "#/entities/User" }, "description": "Users" },
+    "/guest_sessions/{sessionId}": { "schema": { "$ref": "#/entities/GuestSession" }, "description": "Guest sessions" },
+    "/reports/{reportId}": { "schema": { "$ref": "#/entities/Report" }, "description": "Reports" },
+    "/premium_access/{accessId}": { "schema": { "$ref": "#/entities/PremiumAccess" }, "description": "Premium access records" },
+    "/admin_notes/{noteId}": { "schema": { "$ref": "#/entities/AdminNote" }, "description": "Admin notes" }
+  }
+}
